@@ -16,51 +16,9 @@ var bodyParser = require('body-parser');
 //var arrOFPositins = [{"lat":30.061887,"long":31.337479},{"lat":30.061978,"long":31.337738},{"lat":30.062210, "long":31.339283},{"lat":30.062328,"long": 31.340105},{"lat":30.062457,"long":31.341140},{"lat":30.062578,"long": 31.342063},{"lat":30.062671, "long":31.342835},{"lat":30.062727, "long":31.343479},{"lat":30.062718,"long": 31.343726}]
 var arrOFPositins= new Array();
 var listOfPositions={};
-
 var tracks={};
 var tracksIDs={};
-
 var tracksSocketIDs={};
-
-for(var i=0;i<400000;i++)
-{
-  var obj={"lat":i,"long":i,"timesent":i};
-  arrOFPositins.push(obj);
-}
-
-var arr1=[],arr2=[];
-
-for(var i=0;i<9;i++)
-{
-  arr1[i]=i
-}
-for(var i=0;i<5;i++)
-{
-  arr2[i]=i
-}
-
-function find_sockets(trackID, skip, limit){
-result = []
-
-// Find this discussion's comment buckets
-buckets = db.model("track_coordinates").find(
-    { 'track': "5a116433d9c429bb66219ef1"},
-    { 'bucket': 1 })
-buckets = buckets.sort('bucket')
-// Iterate through those buckets, making a query obtaining comments for each
-for ( bucket in buckets){
-
-        page_query = db.model("track_coordinates").find(
-            { 'track': "5a116433d9c429bb66219ef1", 'bucket': bucket['bucket'] },
-            { 'count': 1, 'location': { '$slice': [ skip, limit ] }})
-
-        result.push((bucket['bucket'], page_query['location']))
-        // skip =Math.max(0, skip - page_query['count'])
-        // limit -= page_query['location'].length
-        // if (limit == 0) break
-        }
-          return  page_query
-    }
 
 app.use('/static', express.static(__dirname + "/public"));
 
@@ -87,16 +45,6 @@ app.use('/static', express.static(__dirname + "/public"));
 
 app.get('/test3',function(req,resp)
 { 
-  
-  // db.model('track_coordinates')
-  // .findOne({"_id":'ObjectId("5a23d1bdadea8914bc1738ea")'})
-  // .populate('track') //This populates the author id with actual author information!
-  // .exec(function (err, story) {
-  //   if (err) return handleError(err);
-  //   console.log('The  track %s', story.track.startTime);
-    
-  // });
-  
   getData().then(function(data)
 {
   console.log(data);
@@ -108,7 +56,6 @@ app.get('/test.html',function(req,resp)
   
   resp.sendfile(__dirname+"/views/test.html");
   
-
 })
 
 
@@ -129,21 +76,11 @@ app.get('/index2', function(req, res) {
       
     });
 
-
-    
-
 app.get('/locations', function(req, resp) {
   
   db.model("userlocations").find({},function(err,data){
    
     data.forEach(function(x){
-
-      //  y= x.location.toArray();
-      //  for(i=0;i<y.length;i++)
-      //  {
-      //    console.log("i.lat:",i.lat,"i.long:",i.long)
-      //  }
-      // console.log("data",x.location)    
       x.location.forEach(function(y)
       {
         console.log("lat:",y.lat);
@@ -158,7 +95,6 @@ app.get('/locations', function(req, resp) {
     resp.end(json);
  
 })
-// console.log(find_sockets("3", 300, 50));
   
 });
 
@@ -208,12 +144,7 @@ app.get("/getTracks",function(req,resp){
 
 
     resp.send(data);
-  
-    
-
- 
  })
- 
   
   })
 app.get("/getTrackData/:trackId",function(req,resp)
@@ -263,12 +194,8 @@ app.get("/getTrackPoints/:trackId",function(req,resp)
  })
 
 })
-  
 
 })
-
-
-
 
 io.on('connection', function(socket){
 

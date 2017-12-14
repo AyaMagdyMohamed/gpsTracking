@@ -26,7 +26,7 @@ var myOptions = {
     mapTypeId: google.maps.MapTypeId.ROADMAP,
 }
 var map = new google.maps.Map(document.getElementById("map"), myOptions);
-var flightPlanCoordinates={};
+var flightPlanCoordinates=[];
 var marker = new SlidingMarker({
     position: myLatlng,
     map: map,
@@ -34,6 +34,9 @@ var marker = new SlidingMarker({
     title:data.trackId
   });
 
+  
+  flightPlanCoordinates.push( {lat: Number(data.lat), lng:Number(data.long)}
+  )
 function moveCursor(socketData)
 {
     console.log("--------------data-------------")
@@ -44,24 +47,27 @@ function moveCursor(socketData)
             
                 console.log('just funna move it...');
                 marker.setPosition(new google.maps.LatLng(socketData.lat,socketData.long));
-                // if (flightPlanCoordinates.hasOwnProperty(data.id)) 
-                // {
-                //     flightPlanCoordinates[data.id].push( {lat: data.lat, lng:data.long}
-                //     )
-                //     if(flightPlanCoordinates[data.id].length==2)
-                //     {
-                //         var flightPath = new google.maps.Polyline({
-                //             path: flightPlanCoordinates[data.id],
-                //             geodesic: true,
-                //             strokeColor: '#FF0000',
-                //             strokeOpacity: 1.0,
-                //             strokeWeight: 2
-                //           }); 
-                //           flightPath.setMap(map);
+               
+                    flightPlanCoordinates.push( {lat: Number(socketData.lat), lng:Number(socketData.long)}
+                    )
+                    console.log("size issssssssss",flightPlanCoordinates.length)
+                    if(flightPlanCoordinates.length==2)
+                    {
+                        
+                        var flightPath = new google.maps.Polyline({
+                            path: flightPlanCoordinates,
+                            
+                            strokeColor: '#FF0000',
+                            strokeOpacity: 1.0,
+                            strokeWeight: 2
+                          }); 
+                          flightPath.setMap(map);
+                          //map.fitBounds(latLngBounds);
+                          var temp=flightPlanCoordinates[1];
+                          flightPlanCoordinates=[temp]
                           
-                //     }
-                // }
-            
+                    }
+                
 
 }
 
