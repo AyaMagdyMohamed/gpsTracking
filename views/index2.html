@@ -77,12 +77,22 @@
                           })
                      
 
-                            iosocket.on("startTrack2",function(id)
+                            iosocket.on("startTrack",function(id)
                           {
-                          trackID=id;
-                          console.log("inside on socket")
+                                trackID=id;
+                                console.log("inside on socket")
 
                          })
+
+
+                        //  iosocket.on("data2",function(data)
+                        //  {
+                        //    console.log("locaaaaaation");
+                        //   var url = 'http://localhost:3000/test.html?trackId='+data.id+"&lat="+data.lat+"&long="+data.long;
+   
+                        //    //document.location.href = url;
+                        //     window.open(url, '_blank');
+                        //  })
 
 
                    

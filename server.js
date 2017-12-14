@@ -103,6 +103,14 @@ app.get('/test3',function(req,resp)
 })
 })
 
+app.get('/test.html',function(req,resp)
+{ 
+  
+  resp.sendfile(__dirname+"/views/test.html");
+  
+
+})
+
 
 
 app.get('/', function(req, res) {
@@ -308,7 +316,8 @@ io.on('connection', function(socket){
  socket.on("location",function(trackId,latitude,longitude){
 
 
-   socket.broadcast.emit("data",{id:trackId,lat:latitude,long:longitude})
+   io.emit("data",{id:trackId,lat:latitude,long:longitude});
+   socket.emit("data2",{id:trackId,lat:latitude,long:longitude});
 
    console.log("trackId",trackId);
    console.log("latitude",latitude);
