@@ -277,7 +277,7 @@ io.on('connection', function(socket){
 
  })
 
- socket.on("disconnect",function(){
+ socket.on("disconnect",async function(){
    console.log("disconnected",socket.id);
    //insertInDB.isTrackedInCurrentSocket = false;
   console.log("track id socketIDS",tracksSocketIDs[socket.id]);
@@ -287,12 +287,12 @@ io.on('connection', function(socket){
      console.log("tracksIDs[trackId]",tracksIDs[trackId])
      if(tracks[socket.id].length!=0)
         {
-         insertObj.getLastBucketSizeFromDB(tracksIDs[trackId]).then(function(lastBucketSize)
+         await  insertObj.getLastBucketSizeFromDB(tracksIDs[trackId]).then(function(lastBucketSize)
         {
           console.log("current bucket size",lastBucketSize)
           insertObj.lastBucketSize=lastBucketSize;
         });
-         insertObj.getLastBucketNumberFromDB(tracksIDs[trackId]).then(function(currentBucketNo){
+         await insertObj.getLastBucketNumberFromDB(tracksIDs[trackId]).then(function(currentBucketNo){
 
           console.log("current bucket numbeeeeer",currentBucketNo)
           insertObj.currentBucketNo=currentBucketNo;
@@ -335,4 +335,5 @@ server.listen(3000, function(){
 });
 
 
-     
+io.set('heartbeat timeout', 4000); 
+io.set('heartbeat interval', 2000);    
