@@ -33,6 +33,7 @@
           <input type="submit" name="" value="start">
         </form>
         <form id="send"> <input type="submit" name="" value="location"></form>
+        <form id="search"> <input type="submit" name="" value="search"></form>
         
         
       </div>
@@ -52,6 +53,7 @@
                      var $long=$('#long');
                      var $sendMessages=$('#send-messages');
                      var $send=$('#send');
+                     var $search=$('#search');
 
                       // -----------------------------------------------
                  
@@ -74,6 +76,13 @@
                            console.log("send clicked")
 
                            iosocket.emit('location',trackID,$lat.val(),$long.val());
+
+                          })
+                          $search.submit(function(e){
+                           e.preventDefault();
+                           console.log("search clicked")
+
+                           iosocket.emit('search',$lat.val(),$long.val());
 
                           })
                      

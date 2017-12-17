@@ -323,6 +323,12 @@ io.on('connection', function(socket){
 
  })
 
+ socket.on("search",function(lat,long)
+{
+  socket.broadcast.emit("search",lat,long);
+
+})
+
 });
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
