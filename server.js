@@ -332,9 +332,9 @@ io.on('connection', function(socket){
 
  })
 
- socket.on("search",function(lat,long)
+ socket.on("search",function(lat,long,info)
 {
-  socket.broadcast.emit("search",lat,long);
+  socket.broadcast.emit("search",lat,long,info);
 
 })
 

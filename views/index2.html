@@ -30,6 +30,7 @@
           <input size=35 type="text" name="" value="" id="trackID">
           <input size=35 type="text" name="" value="" id="lat">
           <input size=35 type="text" name="" value="" id="long">
+          <input size=35 type="text" name="" value="" id="info">
           <input type="submit" name="" value="start">
         </form>
         <form id="send"> <input type="submit" name="" value="location"></form>
@@ -54,6 +55,8 @@
                      var $sendMessages=$('#send-messages');
                      var $send=$('#send');
                      var $search=$('#search');
+                     var $info=$('#info');
+
 
                       // -----------------------------------------------
                  
@@ -82,7 +85,7 @@
                            e.preventDefault();
                            console.log("search clicked")
 
-                           iosocket.emit('search',$lat.val(),$long.val());
+                           iosocket.emit('search',$lat.val(),$long.val(),$info.val());
 
                           })
                      

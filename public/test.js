@@ -41,7 +41,8 @@ $.get("savedPlaces", function(data){
         var marker = new google.maps.Marker({
           position: new google.maps.LatLng(arrOFPositins[i].lat,arrOFPositins[i].long),
           map: map,
-          icon: 'static/GoogleMapsMarkers/yellow_MarkerB.png'
+          icon: 'static/GoogleMapsMarkers/yellow_MarkerB.png',
+          title:arrOFPositins[i].lat+","+arrOFPositins[i].long
          
         });
     
@@ -103,31 +104,55 @@ socket.on('data', function(socketData) {
 //TODO
 // based on status come with socket change marker color
 // change popup content to info come from socket
-socket.on('search', function(lat,long) {
+socket.on('search', function(lat,long,info) {
 
     
     console.log("inside search");
+    console.log("info",info)
    
     var infowindow = new google.maps.InfoWindow();
+    var item={};
 
+    item = savedMarkers.find(item => item.getPosition().lat() == lat&&(String(item.getPosition().lng()).slice(0,long.length))==long);
+    console.log("item",typeof(item))
+    if(typeof(item)!='object')
+    {
+        console.log("inside if for push ");
+        var marker = new google.maps.Marker({
+            position: new google.maps.LatLng(lat,long),
+            map: map,
+            icon: 'static/GoogleMapsMarkers/blue_MarkerB.png'
+           
+          });
+          
+      
+          
+    }
     for(var i=0;i<savedMarkers.length;i++)
     {
         
       //Note when markers saved put extra digits on longitude
       console.log(lat,"     ",long)
-      console.log(savedMarkers[i].getPosition().lat(),"--------",savedMarkers[i].getPosition().lng())
-      if(savedMarkers[i].getPosition().lat()==lat&&savedMarkers[i].getPosition().lng()==long)
-      savedMarkers[i].setIcon('static/GoogleMapsMarkers/green_MarkerR.png')
-      else
-         console.log(false)
-
-       google.maps.event.addListener(savedMarkers[i], 'click', (function(marker, i) {
+     // console.log(savedMarkers[i].getPosition().lat(),"--------",savedMarkers[i].getPosition().lng())
+      if(savedMarkers[i].getPosition().lat()==lat&&(String(savedMarkers[i].getPosition().lng()).slice(0,long.length))==long)
+      {
+        savedMarkers[i].setIcon('static/GoogleMapsMarkers/green_MarkerR.png');
+        google.maps.event.addListener(savedMarkers[i], 'click', (function(marker, i) {
             return function() {
-              infowindow.setContent("info: sold");
+              infowindow.setContent(info);
               infowindow.open(map, marker);
             }
           })(savedMarkers[i], i));
+       
+      }
+      else
+         console.log(false)
+
+      
     }
+
+    savedMarkers.push(marker);
+   
    
              
 });
