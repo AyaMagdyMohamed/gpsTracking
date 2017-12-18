@@ -14,12 +14,9 @@ for (var i = 0, l = params.length; i < l; i++) {
 }
 console.log("urlllllll",data.lat,data.long);
 
-var arrOFPositins = [{"lat":30.061887,"long":31.33747900000003},{"lat":30.061978,"long":31.337738},{"lat":30.062210, "long":31.339283},{"lat":30.062328,"long": 31.340105},{"lat":30.062457,"long":31.341140},{"lat":30.062578,"long": 31.342063},{"lat":30.062671, "long":31.342835},{"lat":30.062727, "long":31.343479},{"lat":30.062718,"long": 31.343726}]
-
+var arrOFPositins = [];
 var socket = io.connect('http://localhost:3000');
 var savedMarkers = [];
-
-
 var myLatlng = new google.maps.LatLng(data.lat,data.long);
 var myOptions = {
     zoom: 15,
@@ -27,16 +24,6 @@ var myOptions = {
     mapTypeId: google.maps.MapTypeId.ROADMAP,
 }
 var map = new google.maps.Map(document.getElementById("map"), myOptions);
-for (var i = 0; i < arrOFPositins.length; i++) {  
-    var marker = new google.maps.Marker({
-      position: new google.maps.LatLng(arrOFPositins[i].lat,arrOFPositins[i].long),
-      map: map,
-      icon: 'static/GoogleMapsMarkers/yellow_MarkerB.png'
-     
-    });
-
-    savedMarkers.push(marker);
-}
 var flightPlanCoordinates=[];
 var marker = new SlidingMarker({
     position: myLatlng,
@@ -45,9 +32,28 @@ var marker = new SlidingMarker({
     title:data.trackId
   });
 
+
+$.get("savedPlaces", function(data){
+    //console.log("Data: " + data );
+    arrOFPositins=data
+    for (var i = 0; i < arrOFPositins.length; i++) { 
+        
+        var marker = new google.maps.Marker({
+          position: new google.maps.LatLng(arrOFPositins[i].lat,arrOFPositins[i].long),
+          map: map,
+          icon: 'static/GoogleMapsMarkers/yellow_MarkerB.png'
+         
+        });
+    
+        savedMarkers.push(marker);
+    }
   
-  flightPlanCoordinates.push( {lat: Number(data.lat), lng:Number(data.long)}
-  )
+});
+
+
+  
+flightPlanCoordinates.push( {lat: Number(data.lat), lng:Number(data.long)})
+  
 function moveCursor(socketData)
 {
     console.log("--------------data-------------")
@@ -101,14 +107,15 @@ socket.on('search', function(lat,long) {
 
     
     console.log("inside search");
+   
     var infowindow = new google.maps.InfoWindow();
 
     for(var i=0;i<savedMarkers.length;i++)
     {
         
-  
-     // console.log(lat,"     ",long)
-      //console.log(savedMarkers[i].getPosition().lat(),"--------",savedMarkers[i].getPosition().lng())
+      //Note when markers saved put extra digits on longitude
+      console.log(lat,"     ",long)
+      console.log(savedMarkers[i].getPosition().lat(),"--------",savedMarkers[i].getPosition().lng())
       if(savedMarkers[i].getPosition().lat()==lat&&savedMarkers[i].getPosition().lng()==long)
       savedMarkers[i].setIcon('static/GoogleMapsMarkers/green_MarkerR.png')
       else
@@ -123,6 +130,6 @@ socket.on('search', function(lat,long) {
     }
    
              
-                });
+});
 })
 

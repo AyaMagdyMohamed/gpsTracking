@@ -51,6 +51,15 @@ app.get('/test3',function(req,resp)
 })
 })
 
+app.get('/savedPlaces',function(req,resp)
+{
+  //resp.send("hello from saved places");
+   db.model('saved_places').find({},{"_id":0},function(err,data)
+  {
+    resp.send(data);
+  })
+})
+
 app.get('/test.html',function(req,resp)
 { 
   
@@ -340,6 +349,14 @@ server.listen(3000, function(){
   console.log('listening on *:3000');
 });
 
-
+// to dedect disconnect of client in case of no internet after 4 seconds
 io.set('heartbeat timeout', 4000); 
 io.set('heartbeat interval', 2000);    
+
+
+process.on('SIGINT', function(){
+  db.connection.close(function(){
+    console.log("Mongoose default connection is disconnected due to application termination");
+     process.exit(0);
+    });
+});
