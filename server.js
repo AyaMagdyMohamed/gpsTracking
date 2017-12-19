@@ -19,35 +19,113 @@ var arrOFPositins= [
   {
     "lat": 30.059166,
     "long":31.337057,
-    "info":"not found"
+    "info":"not found",
+    "status":"fail"
   },
   {
       "lat": 30.060166,
       "long": 31.337085,
-      "info":"sold"
+      "info":"sold",
+      "status":"success"
   },
   {
       "lat": 30.061482,
       "long": 31.337726,
-      "info":"sold"
+      "info":"sold",
+      "status":"success"
   },
   {
       "lat": 30.063152,
       "long": 31.336809,
-      "info":" sold 3000 amount"
+      "info":" sold 3000 amount",
+      "status":"success"
   },
   {
       "lat": 30.065624,
       "long": 31.337165,
-      "info":"sold 5000 amount"
+      "info":"sold 5000 amount",
+      "status":"success"
   },
   {
     "lat": 30.066657,
     "long": 31.334881,
-    "info":"not found"    
+    "info":"not found",
+    "status":"fail"    
   }
 
 ];
+var arrOFPositins= [
+  
+    {
+      "lat": 30.059166,
+      "long":31.337057,
+      "info":"not found",
+      "status":"fail"
+    },
+    {
+        "lat": 30.060166,
+        "long": 31.337085,
+        "info":"sold",
+        "status":"success"
+    },
+    {
+        "lat": 30.061482,
+        "long": 31.337726,
+        "info":"sold",
+        "status":"success"
+    },
+    {
+        "lat": 30.063152,
+        "long": 31.336809,
+        "info":" sold 3000 amount",
+        "status":"success"
+    },
+    {
+        "lat": 30.065624,
+        "long": 31.337165,
+        "info":"sold 5000 amount",
+        "status":"success"
+    },
+    {
+      "lat": 30.066657,
+      "long": 31.334881,
+      "info":"not found",
+      "status":"fail"    
+    }
+  
+  ];var arrOFPositins2= [
+    
+      {
+        "lat": 30.043672,
+        "long":31.237129,
+        "info":"found",
+        "status":"success"
+      },
+      {
+          "lat": 30.044851,
+          "long": 31.238084,
+          "info":"not found",
+          "status":"fail"
+      },
+      {
+          "lat": 30.046105,
+          "long": 31.240047,
+          "info":"sold",
+          "status":"success"
+      },
+      {
+          "lat": 30.046764,
+          "long": 31.238137,
+          "info":" not found",
+          "status":"fail"
+      },
+      {
+          "lat": 30.049754,
+          "long": 31.239950,
+          "info":"sold 2000 amount",
+          "status":"success"
+      }  
+    ];
 var listOfPositions={};
 var tracks={};
 var tracksIDs={};
@@ -217,10 +295,15 @@ function doSetTimeout(i,location,ID) {
 } 
 function fireSearchEvent(i,visitedLocation){
   //console.log("inside search event",visitedLocation.lat,visitedLocation.long,info);
-  setTimeout(function() { io.emit("search",String(visitedLocation.lat),String(visitedLocation.long),visitedLocation.info); }, 7000*i);
+  setTimeout(function() { io.emit("search",String(visitedLocation.lat),String(visitedLocation.long),visitedLocation.info,visitedLocation.status); }, 7000*i);
 
 }
+var arrOfSockets=[];
+
 io.on('connection', function(socket){
+
+  arrOfSockets.push(socket.id);
+  console.log("size",arrOfSockets.length);
 
   var id=shortid.generate();
   let insertObj = new insertInDB();
@@ -235,11 +318,23 @@ io.on('connection', function(socket){
     console.log("trackID",id);
     socket.emit('startTrack',id);
     // for simulation 
+    if(arrOfSockets.length==2)
+    {
+      for (var i = 0; i < arrOFPositins.length;i++)
+      doSetTimeout((i+1),arrOFPositins[i],id);
+      for(var i=0;i<arrOFPositins.length;i++)
+      fireSearchEvent((i+1),arrOFPositins[i]);
+     }
+     else if (arrOfSockets.length==4)
+    {
+      for (var i = 0; i < arrOFPositins2.length;i++)
+      doSetTimeout((i+1),arrOFPositins2[i],id);
+      for(var i=0;i<arrOFPositins2.length;i++)
+      fireSearchEvent((i+1),arrOFPositins2[i]);
 
-    for (var i = 0; i < arrOFPositins.length;i++)
-          doSetTimeout((i+1),arrOFPositins[i],id);
-    for(var i=0;i<arrOFPositins.length;i++)
-          fireSearchEvent((i+1),arrOFPositins[i]);
+    
+     }
+    
 
     var trackModel=db.model("tracks");
     var new_track=new trackModel();

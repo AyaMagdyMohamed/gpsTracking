@@ -29,7 +29,8 @@ var marker = new SlidingMarker({
     position: myLatlng,
     map: map,
     duration: 6000,
-    title:data.trackId
+    title:data.trackId,
+    draggable:true,
   });
 
 
@@ -77,7 +78,8 @@ function moveCursor(socketData)
                             
                             strokeColor: '#FF0000',
                             strokeOpacity: 1.0,
-                            strokeWeight: 2
+                            strokeWeight: 2,
+                          
                           }); 
                           flightPath.setMap(map);
                           //map.fitBounds(latLngBounds);
@@ -104,16 +106,17 @@ socket.on('data', function(socketData) {
 //TODO
 // based on status come with socket change marker color
 // change popup content to info come from socket
-socket.on('search', function(lat,long,info) {
+socket.on('search', function(lat,long,info,status) {
 
     
     console.log("inside search");
     console.log("info",info)
+    console.log("status",status)
    
     var infowindow = new google.maps.InfoWindow();
     var item={};
 
-    item = savedMarkers.find(item => item.getPosition().lat() == lat&&(String(item.getPosition().lng()).slice(0,long.length))==long);
+    item = savedMarkers.find(item => item.getPosition().lat() == lat&&((item.getPosition().lng()).toFixed(6))==long);
     console.log("item",typeof(item))
     if(typeof(item)!='object')
     {
@@ -129,13 +132,13 @@ socket.on('search', function(lat,long,info) {
     }
     for(var i=0;i<savedMarkers.length;i++)
     {
-        
+        console.log("markersLength",savedMarkers.length)
       //Note when markers saved put extra digits on longitude
      console.log(lat,"     ",long)
-     console.log(savedMarkers[i].getPosition().lat(),"--------",String(savedMarkers[i].getPosition().lng()).slice(0,long.length))
-      if(savedMarkers[i].getPosition().lat()==lat&&(String(savedMarkers[i].getPosition().lng()).slice(0,long.length))==long)
+     console.log(savedMarkers[i].getPosition().lat(),"--------",((savedMarkers[i].getPosition().lng()).toFixed(6)))
+      if(savedMarkers[i].getPosition().lat()==lat &&status=="success"&&((savedMarkers[i].getPosition().lng()).toFixed(6))==long)
       {
-        savedMarkers[i].setIcon('static/GoogleMapsMarkers/green_MarkerR.png');
+        savedMarkers[i].setIcon('static/GoogleMapsMarkers/darkgreen_MarkerS.png');
         google.maps.event.addListener(savedMarkers[i], 'click', (function(marker, i) {
             return function() {
               infowindow.setContent(info);
@@ -144,8 +147,20 @@ socket.on('search', function(lat,long,info) {
           })(savedMarkers[i], i));
        
       }
+      else if(savedMarkers[i].getPosition().lat()==lat&&status=="fail"&&((savedMarkers[i].getPosition().lng()).toFixed(6))==long)
+      {
+        savedMarkers[i].setIcon('static/GoogleMapsMarkers/red_MarkerF.png');
+        google.maps.event.addListener(savedMarkers[i], 'click', (function(marker, i) {
+            return function() {
+            infowindow.setContent(info);
+            infowindow.open(map, marker);
+            }
+        })(savedMarkers[i], i));
+      }
       else
-         console.log(false)
+      {
+          console.log("false")
+      }
 
       
     }
