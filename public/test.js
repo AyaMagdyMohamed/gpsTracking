@@ -121,19 +121,18 @@ socket.on('search', function(lat,long,info) {
         var marker = new google.maps.Marker({
             position: new google.maps.LatLng(lat,long),
             map: map,
-            icon: 'static/GoogleMapsMarkers/blue_MarkerB.png'
+            icon: 'static/GoogleMapsMarkers/blue_MarkerB.png',
+            title:lat+","+long
            
           });
-          
-      
-          
+          savedMarkers.push(marker);      
     }
     for(var i=0;i<savedMarkers.length;i++)
     {
         
       //Note when markers saved put extra digits on longitude
-      console.log(lat,"     ",long)
-     // console.log(savedMarkers[i].getPosition().lat(),"--------",savedMarkers[i].getPosition().lng())
+     console.log(lat,"     ",long)
+     console.log(savedMarkers[i].getPosition().lat(),"--------",String(savedMarkers[i].getPosition().lng()).slice(0,long.length))
       if(savedMarkers[i].getPosition().lat()==lat&&(String(savedMarkers[i].getPosition().lng()).slice(0,long.length))==long)
       {
         savedMarkers[i].setIcon('static/GoogleMapsMarkers/green_MarkerR.png');
@@ -151,7 +150,7 @@ socket.on('search', function(lat,long,info) {
       
     }
 
-    savedMarkers.push(marker);
+  
    
    
              

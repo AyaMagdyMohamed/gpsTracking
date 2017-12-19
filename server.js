@@ -14,42 +14,48 @@ var bodyParser = require('body-parser');
 
 
 //var arrOFPositins = [{"lat":30.061887,"long":31.337479},{"lat":30.061978,"long":31.337738},{"lat":30.062210, "long":31.339283},{"lat":30.062328,"long": 31.340105},{"lat":30.062457,"long":31.341140},{"lat":30.062578,"long": 31.342063},{"lat":30.062671, "long":31.342835},{"lat":30.062727, "long":31.343479},{"lat":30.062718,"long": 31.343726}]
-var arrOFPositins= new Array();
+var arrOFPositins= [
+
+  {
+    "lat": 30.059166,
+    "long":31.337057,
+    "info":"not found"
+  },
+  {
+      "lat": 30.060166,
+      "long": 31.337085,
+      "info":"sold"
+  },
+  {
+      "lat": 30.061482,
+      "long": 31.337726,
+      "info":"sold"
+  },
+  {
+      "lat": 30.063152,
+      "long": 31.336809,
+      "info":" sold 3000 amount"
+  },
+  {
+      "lat": 30.065624,
+      "long": 31.337165,
+      "info":"sold 5000 amount"
+  },
+  {
+    "lat": 30.066657,
+    "long": 31.334881,
+    "info":"not found"    
+  }
+
+];
 var listOfPositions={};
 var tracks={};
 var tracksIDs={};
 var tracksSocketIDs={};
 
+
+
 app.use('/static', express.static(__dirname + "/public"));
-
-
- async  function getData ()
-{
-
-  var bucket;
- await db.model("track_coordinates").find({track:"5a23e773cf96e91804403917"},{location:1,_id:0}).sort({bucket:-1}).limit(1).then(function(data)
-  {
-  
-    console.log("bucket num ",data[0].location.length);
-    bucket=data[0].location.length; 
-  
-    
-  }
-
- )
-
- return bucket ;
-
- 
-}
-
-app.get('/test3',function(req,resp)
-{ 
-  getData().then(function(data)
-{
-  console.log(data);
-})
-})
 
 app.get('/savedPlaces',function(req,resp)
 {
@@ -206,6 +212,14 @@ app.get("/getTrackPoints/:trackId",function(req,resp)
 
 })
 
+function doSetTimeout(i,location,ID) {
+  setTimeout(function() { io.emit("data",{id:ID,lat:location.lat,long:location.long}); }, 5000*i);
+} 
+function fireSearchEvent(i,visitedLocation){
+  //console.log("inside search event",visitedLocation.lat,visitedLocation.long,info);
+  setTimeout(function() { io.emit("search",String(visitedLocation.lat),String(visitedLocation.long),visitedLocation.info); }, 7000*i);
+
+}
 io.on('connection', function(socket){
 
   var id=shortid.generate();
@@ -220,6 +234,12 @@ io.on('connection', function(socket){
     console.log("hello user"); 
     console.log("trackID",id);
     socket.emit('startTrack',id);
+    // for simulation 
+
+    for (var i = 0; i < arrOFPositins.length;i++)
+          doSetTimeout((i+1),arrOFPositins[i],id);
+    for(var i=0;i<arrOFPositins.length;i++)
+          fireSearchEvent((i+1),arrOFPositins[i]);
 
     var trackModel=db.model("tracks");
     var new_track=new trackModel();
