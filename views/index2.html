@@ -51,6 +51,7 @@
 
                      var iosocket = io.connect();
                      var trackID;
+                     var $id=$('#trackID');
                      var $lat=$('#lat');
                      var $long=$('#long');
                      var $sendMessages=$('#send-messages');
@@ -70,7 +71,7 @@
 
                                console.log("clicked")
                                console.log("hi") 
-                               iosocket.emit('startTrack');                                            
+                               iosocket.emit('startTrack',$id.val());                                            
                           });
 
                           $send.submit(function(e){
