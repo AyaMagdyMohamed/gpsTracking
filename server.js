@@ -197,9 +197,13 @@ app.get("/getUserTracks/:userId",function(req,resp)
   
   //resp.send(req.params.userId);
   var userId=JSON.parse(req.params.userId);
-  db.model("users").findOne({"userID":userId},{"_id":1},function(err,data)
+  console.log(userId);
+  db.model("users").findOne({"userID":userId},{"_id":true},function(err,data)
 {
-   
+   if(err)
+   console.log(err);
+   else
+    console.log(data)
   db.model("tracks").find({"userID":data._id},function(err,data)
   {
     if (!err)
@@ -291,49 +295,46 @@ app.get("/getTrackPoints/:trackId",function(req,resp)
 })
 
 function doSetTimeout(i,location,ID) {
-  setTimeout(function() { io.emit("data",{id:ID,lat:location.lat,long:location.long}); }, 5000*i);
+  setTimeout(function() { io.emit("data",{id:ID,lat:location.lat,long:location.long}); }, 6000*i);
 } 
 function fireSearchEvent(i,visitedLocation){
   //console.log("inside search event",visitedLocation.lat,visitedLocation.long,info);
-  setTimeout(function() { io.emit("search",String(visitedLocation.lat),String(visitedLocation.long),visitedLocation.info,visitedLocation.status); }, 7000*i);
+  setTimeout(function() { io.emit("search",visitedLocation.lat,visitedLocation.long,visitedLocation.info,visitedLocation.status); }, 8000*i);
 
 }
-var arrOfSockets=[];
+
 
 io.on('connection', function(socket){
 
-  arrOfSockets.push(socket.id);
-  console.log("size",arrOfSockets.length);
-
+  var arr=[];
   var id=shortid.generate();
   let insertObj = new insertInDB();
   var trackObjectId;  
 
   console.log('a user connected');
-  console.log(socket.id)
-  
-  socket.on('startTrack', function () {
+  socket.on('startTrack', function (ID) {
     
     console.log("hello user"); 
-    console.log("trackID",id);
-    socket.emit('startTrack',id);
+    //console.log("trackID",id);
+    //socket.emit('startTrack',id); uncommet this line after remove simulation part
     // for simulation 
-    if(arrOfSockets.length==2)
+    if(ID==1)
     {
-      for (var i = 0; i < arrOFPositins.length;i++)
-      doSetTimeout((i+1),arrOFPositins[i],id);
-      for(var i=0;i<arrOFPositins.length;i++)
-      fireSearchEvent((i+1),arrOFPositins[i]);
-     }
-     else if (arrOfSockets.length==4)
+      arr=arrOFPositins;
+    }
+    else if(ID==2)
     {
-      for (var i = 0; i < arrOFPositins2.length;i++)
-      doSetTimeout((i+1),arrOFPositins2[i],id);
-      for(var i=0;i<arrOFPositins2.length;i++)
-      fireSearchEvent((i+1),arrOFPositins2[i]);
-
+      arr=arrOFPositins2;
+    }
+      for (var i = 0; i < arr.length;i++)
+      {
+        doSetTimeout((i+1),arr[i],id);
+        //for(var i=0;i<arr.length;i++)
+        fireSearchEvent((i+1),arr[i]);
+      }
+      
+     
     
-     }
     
 
     var trackModel=db.model("tracks");

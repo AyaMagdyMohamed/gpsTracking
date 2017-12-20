@@ -4,6 +4,8 @@ var db = require('../dbConnection.js');
 var Schema=db.Schema
 
 var savedPlacesSchema=new Schema({
+
+    placeID:{type:String},
     lat:{type: Number, "default" : 0},
     long:{type: Number, "default" : 0},
     timeSent: {type: Date},

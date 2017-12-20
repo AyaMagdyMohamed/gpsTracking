@@ -16,6 +16,10 @@
       {
         "name": "Users",
         "description": "API for Users in the system"
+      },
+      {
+        "name": "Places",
+        "description": "API for saved places in the database"
       }
     ],
     "schemes": [
@@ -161,8 +165,27 @@
             }
           }
         }
-      }
-    },
+      },
+      "/savedPlaces": {
+        
+         "get": {
+           "tags": [
+             "Places"
+           ],
+           "summary": "Get all Places in the  system",
+           "responses": {
+             "200": {
+               "description": "OK",
+               "schema": {
+                 "$ref": "#/definitions/Places"
+               }
+             }
+           }
+         }
+        
+       
+    }
+  },
     "definitions": {
       "Track": {
         "required": [
@@ -257,11 +280,35 @@
 
         }
       },
+      "Place": {
+        
+        "properties": {
+          "timeSent": {
+            "type": "string",
+            "format":"date-time"
+            
+          },
+          "latitude": {
+            "type": "string"
+          },
+          "longitude": {
+            "type": "string"
+          },
+          "placeID":
+          {
+            "type": "string"
+          }
+
+        }
+      },
       "Users": {
         "type": "array",
         "$ref": "#/definitions/User"
+      },
+      "Places":{
+        "type": "array",
+        "$ref": "#/definitions/Place"
       }
 
     }
   }
-  
