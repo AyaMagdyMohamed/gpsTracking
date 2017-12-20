@@ -19,109 +19,81 @@ var arrOFPositins= [
   {
     "lat": 30.059166,
     "long":31.337057,
+    "placeID":"1",
     "info":"not found",
     "status":"fail"
   },
   {
       "lat": 30.060166,
       "long": 31.337085,
+      "placeID":"2",
       "info":"sold",
       "status":"success"
   },
   {
       "lat": 30.061482,
       "long": 31.337726,
+      "placeID":"3",
       "info":"sold",
       "status":"success"
   },
   {
       "lat": 30.063152,
       "long": 31.336809,
+      "placeID":"4",
       "info":" sold 3000 amount",
       "status":"success"
   },
   {
       "lat": 30.065624,
       "long": 31.337165,
+      "placeID":"5",
       "info":"sold 5000 amount",
       "status":"success"
   },
   {
     "lat": 30.066657,
     "long": 31.334881,
+    "placeID":"6",
     "info":"not found",
     "status":"fail"    
   }
 
 ];
-var arrOFPositins= [
-  
-    {
-      "lat": 30.059166,
-      "long":31.337057,
-      "info":"not found",
-      "status":"fail"
-    },
-    {
-        "lat": 30.060166,
-        "long": 31.337085,
-        "info":"sold",
-        "status":"success"
-    },
-    {
-        "lat": 30.061482,
-        "long": 31.337726,
-        "info":"sold",
-        "status":"success"
-    },
-    {
-        "lat": 30.063152,
-        "long": 31.336809,
-        "info":" sold 3000 amount",
-        "status":"success"
-    },
-    {
-        "lat": 30.065624,
-        "long": 31.337165,
-        "info":"sold 5000 amount",
-        "status":"success"
-    },
-    {
-      "lat": 30.066657,
-      "long": 31.334881,
-      "info":"not found",
-      "status":"fail"    
-    }
-  
-  ];var arrOFPositins2= [
+var arrOFPositins2= [
     
       {
         "lat": 30.043672,
         "long":31.237129,
+        "placeID":"7",
         "info":"found",
         "status":"success"
       },
       {
           "lat": 30.044851,
           "long": 31.238084,
+          "placeID":"8",
           "info":"not found",
           "status":"fail"
       },
       {
           "lat": 30.046105,
           "long": 31.240047,
+          "placeID":"9",
           "info":"sold",
           "status":"success"
       },
       {
           "lat": 30.046764,
           "long": 31.238137,
+          "placeID":"10",
           "info":" not found",
           "status":"fail"
       },
       {
           "lat": 30.049754,
           "long": 31.239950,
+          "placeID":"11",
           "info":"sold 2000 amount",
           "status":"success"
       }  
@@ -299,7 +271,7 @@ function doSetTimeout(i,location,ID) {
 } 
 function fireSearchEvent(i,visitedLocation){
   //console.log("inside search event",visitedLocation.lat,visitedLocation.long,info);
-  setTimeout(function() { io.emit("search",visitedLocation.lat,visitedLocation.long,visitedLocation.info,visitedLocation.status); }, 8000*i);
+  setTimeout(function() { io.emit("search",visitedLocation.placeID,visitedLocation.lat,visitedLocation.long,visitedLocation.info,visitedLocation.status); }, 8000*i);
 
 }
 
