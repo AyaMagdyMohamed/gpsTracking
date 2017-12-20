@@ -312,6 +312,7 @@ io.on('connection', function(socket){
   var trackObjectId;  
 
   console.log('a user connected');
+
   socket.on('startTrack', function (ID) {
     
     console.log("hello user"); 
