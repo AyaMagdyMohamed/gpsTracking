@@ -43,8 +43,8 @@ $.get("savedPlaces", function(data){
           position: new google.maps.LatLng(arrOFPositins[i].lat,arrOFPositins[i].long),
           map: map,
           icon: 'static/GoogleMapsMarkers/yellow_MarkerB.png',
-          title:arrOFPositins[i].placeID
-         
+          title:arrOFPositins[i].lat+","+arrOFPositins[i].long,
+          placeID:arrOFPositins[i].placeID   
         });
     
         savedPlaces.push(marker);
@@ -106,7 +106,7 @@ socket.on('data', function(socketData) {
 //TODO
 // based on status come with socket change marker color
 // change popup content to info come from socket
-socket.on('search', function(placeID,lat,long,info,status) {
+socket.on('search', function(id,lat,long,info,status) {
 
     
     console.log("inside search");
@@ -117,7 +117,7 @@ socket.on('search', function(placeID,lat,long,info,status) {
     var item={};
 
     //item = savedMarkers.find(item => item.getPosition().lat() == lat&&((item.getPosition().lng()).toFixed(6))==long);
-    item=savedPlaces.find(item =>item.title==placeID);
+    item=savedPlaces.find(item =>item.placeID==id);
 
     console.log("item",typeof(item))
     if(typeof(item)!='object')
@@ -127,7 +127,8 @@ socket.on('search', function(placeID,lat,long,info,status) {
             position: new google.maps.LatLng(lat,long),
             map: map,
             icon: 'static/GoogleMapsMarkers/blue_MarkerB.png',
-            title:placeID
+            title:id,
+            placeID:id
            
           });
           savedPlaces.push(marker);      
@@ -137,11 +138,11 @@ socket.on('search', function(placeID,lat,long,info,status) {
         {
             console.log("markersLength",savedPlaces.length)
        
-           console.log(savedPlaces[i].title,"    ",placeID)
-          if(savedPlaces[i].title==placeID &&status=="success")
+           console.log(savedPlaces[i].placeID,"    ",id)
+          if(savedPlaces[i].placeID==id &&status=="success")
           {
             savedPlaces[i].setIcon('static/GoogleMapsMarkers/darkgreen_MarkerS.png');
-            google.maps.event.addListener(savedMarkers[i], 'click', (function(marker, i) {
+            google.maps.event.addListener(savedPlaces[i], 'click', (function(marker, i) {
                 return function() {
                   infowindow.setContent(info);
                   infowindow.open(map, marker);
@@ -149,10 +150,10 @@ socket.on('search', function(placeID,lat,long,info,status) {
               })(savedPlaces[i], i));
            
           }
-          else if(savedPlaces[i].title==placeID&&status=="fail")
+          else if(savedPlaces[i].placeID==id&&status=="fail")
           {
             savedPlaces[i].setIcon('static/GoogleMapsMarkers/red_MarkerF.png');
-            google.maps.event.addListener(savedMarkers[i], 'click', (function(marker, i) {
+            google.maps.event.addListener(savedPlaces[i], 'click', (function(marker, i) {
                 return function() {
                 infowindow.setContent(info);
                 infowindow.open(map, marker);
