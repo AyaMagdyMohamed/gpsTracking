@@ -10,7 +10,8 @@ var db = require('./dbConnection.js');
 var swaggerUi = require('swagger-ui-express');
 var swaggerDocument = require('./swagger.json');
 var bodyParser = require('body-parser');
-
+var userController=require("./controllers/users");
+var trackController=require("./controllers/tracks");
 
 
 //var arrOFPositins = [{"lat":30.061887,"long":31.337479},{"lat":30.061978,"long":31.337738},{"lat":30.062210, "long":31.339283},{"lat":30.062328,"long": 31.340105},{"lat":30.062457,"long":31.341140},{"lat":30.062578,"long": 31.342063},{"lat":30.062671, "long":31.342835},{"lat":30.062727, "long":31.343479},{"lat":30.062718,"long": 31.343726}]
@@ -24,29 +25,29 @@ var arrOFPositins= [
     "status":"fail"
   },
   {
-      "lat": 30.060166,
-      "long": 31.337085,
+      "lat": 30.060051,
+      "long": 31.337120,
       "placeID":"2",
       "info":"sold",
       "status":"success"
   },
   {
-      "lat": 30.061482,
-      "long": 31.337726,
+      "lat": 30.061501,
+      "long": 31.337485,
       "placeID":"3",
       "info":"sold",
       "status":"success"
   },
   {
-      "lat": 30.063152,
-      "long": 31.336809,
+      "lat": 30.063363,
+      "long": 31.336536,
       "placeID":"4",
       "info":" sold 3000 amount",
       "status":"success"
   },
   {
-      "lat": 30.065624,
-      "long": 31.337165,
+      "lat": 30.065643,
+      "long": 31.337094,
       "placeID":"5",
       "info":"sold 5000 amount",
       "status":"success"
@@ -63,8 +64,8 @@ var arrOFPositins= [
 var arrOFPositins2= [
     
       {
-        "lat": 30.043672,
-        "long":31.237129,
+        "lat": 30.043784,
+        "long":31.236625,
         "placeID":"7",
         "info":"found",
         "status":"success"
@@ -77,8 +78,8 @@ var arrOFPositins2= [
           "status":"fail"
       },
       {
-          "lat": 30.046105,
-          "long": 31.240047,
+          "lat": 30.045929,
+          "long": 31.239740,
           "placeID":"9",
           "info":"sold",
           "status":"success"
@@ -91,8 +92,8 @@ var arrOFPositins2= [
           "status":"fail"
       },
       {
-          "lat": 30.049754,
-          "long": 31.239950,
+          "lat": 30.049951,
+          "long": 31.239554,
           "placeID":"11",
           "info":"sold 2000 amount",
           "status":"success"
@@ -104,8 +105,11 @@ var tracksIDs={};
 var tracksSocketIDs={};
 
 
-
+// Set Middleware for Static Files "JS,CSS,Images"
 app.use('/static', express.static(__dirname + "/public"));
+app.use("/",userController);
+app.use("/",trackController);
+
 
 app.get('/savedPlaces',function(req,resp)
 {
@@ -141,130 +145,6 @@ app.get('/index2', function(req, res) {
       
     });
 
-app.get('/locations', function(req, resp) {
-  
-  db.model("userlocations").find({},function(err,data){
-   
-    data.forEach(function(x){
-      x.location.forEach(function(y)
-      {
-        console.log("lat:",y.lat);
-        console.log("long:",y.long);
-        
-      } 
-    ) 
-   
-    })
-
-    var json=JSON.stringify(data);
-    resp.end(json);
- 
-})
-  
-});
-
-
-app.get("/getUserTracks/:userId",function(req,resp)
-{
-  
-  //resp.send(req.params.userId);
-  var userId=JSON.parse(req.params.userId);
-  console.log(userId);
-  db.model("users").findOne({"userID":userId},{"_id":true},function(err,data)
-{
-   if(err)
-   console.log(err);
-   else
-    console.log(data)
-  db.model("tracks").find({"userID":data._id},function(err,data)
-  {
-    if (!err)
-          resp.send(data);
-    else
-          resp.send(err)
-  })
-
-})
- 
-
-})
-
-app.get("/getUsers",function(req,resp){
-
-   db.model("users").find({},function(err,data)
-  {
-    if (!err)
-       resp.send(data);
-    else
-       resp.send(err)
-
-  })
-
-})
-app.get("/getTracks",function(req,resp){
-  
-  db.model("tracks").find({},function(err,data)
-  {
-    
-  //  db.model("tracks").populate(data,{path:"userID"},function (err,data) {
-  //  console.log(data);
-  //  resp.send(data);
-  // });
-
-
-    resp.send(data);
- })
-  
-  })
-app.get("/getTrackData/:trackId",function(req,resp)
-{
-  var trackId=JSON.parse(req.params.trackId)
- db.model("tracks").find({"trackID":trackId},function(err,data)
- {
-   
-//   db.model("tracks").populate(data,{path:"userID"},function (err,data) {
-//   console.log(data);
-//   resp.send(data);
-//  });
-
-     resp.send(data);
-
-})
-
-})
-
-app.get("/getUserData/:userId",function(req,resp)
-{
-  var userId=JSON.parse(req.params.userId)
- db.model("users").findOne({"userID":userId},function(err,data)
- {
-    
-   console.log(data)
-   resp.send(data);
-
-})
-
-})
-
-app.get("/getTrackPoints/:trackId",function(req,resp)
-{
-  var trackId=JSON.parse(req.params.trackId);
-  console.log(trackId);
-  db.model("tracks").findOne({trackID:trackId},{"_id":1},function(err,data)
-{
-
-  db.model("track_coordinates").aggregate({$match:{"track":db.Types.ObjectId(data._id)}},{$unwind:"$location"},
-  function(err,data)
-  {
-     
-    console.log(data)
-    resp.send(data);
- 
- })
-
-})
-
-})
 
 function doSetTimeout(i,location,ID) {
   setTimeout(function() { io.emit("data",{id:ID,lat:location.lat,long:location.long}); }, 6000*i);
@@ -289,7 +169,7 @@ io.on('connection', function(socket){
     
     console.log("hello user"); 
     //console.log("trackID",id);
-    //socket.emit('startTrack',id); uncommet this line after remove simulation part
+    //socket.emit('startTrack',id);//uncommet this line after remove simulation part
     // for simulation 
     if(ID==1)
     {
@@ -302,7 +182,6 @@ io.on('connection', function(socket){
       for (var i = 0; i < arr.length;i++)
       {
         doSetTimeout((i+1),arr[i],id);
-        //for(var i=0;i<arr.length;i++)
         fireSearchEvent((i+1),arr[i]);
       }
       
@@ -343,7 +222,6 @@ io.on('connection', function(socket){
 
    io.emit("data",{id:trackId,lat:latitude,long:longitude});
    socket.emit("data2",{id:trackId,lat:latitude,long:longitude});
-
    console.log("trackId",trackId);
    console.log("latitude",latitude);
    console.log("longitude",longitude); 
